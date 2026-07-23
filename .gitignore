@@ -1,0 +1,31 @@
+# CMake Build Directories
+/build/
+/out/
+/cmake-build-*/
+
+# Compiled Objects & Libraries
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dylib
+*.dll
+
+# Executables
+*.exe
+*.out
+*.app
+/algo_craft
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.user
+*.suo
+*.sln
+*.vcxproj*
+
+# OS Specific
+.DS_Store
+Thumbs.db
