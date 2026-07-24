@@ -45,3 +45,12 @@ add_executable(run_fft
 )
 target_include_directories(run_fft PRIVATE include)
 
+# ------------------------------------------------------------------------------
+# Executable 3: Bit Reverse
+# ------------------------------------------------------------------------------
+add_executable(run_bitrev
+    src/fft_iterative.cpp
+)
+target_include_directories(run_bitrev PRIVATE include)
+
+

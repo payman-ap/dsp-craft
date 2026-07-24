@@ -5,7 +5,7 @@
 ```
 cmake -B build                   # Run once to set up
 cmake --build build -j           # Compile all targets using parallel jobs
-./build/run_dft                  # Run directly from root
+./build/run_fft                  # Run directly from root
 ```
 
 or  older style:
@@ -38,3 +38,4 @@ STFT
         ↓
 Real-time DSP projects
 ```
+

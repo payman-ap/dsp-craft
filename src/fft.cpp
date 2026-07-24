@@ -70,16 +70,37 @@ std::vector<Complex> fft(const std::vector<Complex>& x, int depth = 0)
     return X;
 }
 
+std::vector<Complex> ifft(const std::vector<Complex>& X)
+{
+    const double N = static_cast<double>(X.size());
+    std::vector<Complex> temp(X.size());
+
+    for(size_t i=0; i < X.size(); i++)
+    {
+        temp[i] = std::conj(X[i]);
+    }
+    auto result = fft(temp);
+
+    for (size_t i = 0; i < result.size(); i++)
+    {
+        result[i] = std::conj(result[i]) / N;
+    }
+
+    return result;
+}
+
 
 int main()
 {
     std::vector<Complex> signal = { 3,1,2,4,5,7,6,8 };
     
-    auto result = fft(signal);
+    auto spectrum = fft(signal);
 
-    printVector(result, "FFT");
+    printVector(spectrum, "FFT");
 
-    // std::cout << result[0] << std::endl;
+    auto recovered_signal = ifft(spectrum);
+
+    printVector(recovered_signal, "iFFT");
 
     return 0;
 }
