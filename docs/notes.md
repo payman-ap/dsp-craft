@@ -22,13 +22,13 @@ make -j
 ```
 ✓ Recursive FFT
         ↓
-Real DFT
+✓ Real DFT
         ↓
-Benchmark DFT vs FFT
+✓ Benchmark DFT vs FFT
         ↓
-Iterative FFT
+✓ Iterative FFT
         ↓
-Inverse FFT
+✓ Inverse FFT
         ↓
 FFT-based convolution
         ↓
@@ -38,4 +38,6 @@ STFT
         ↓
 Real-time DSP projects
 ```
+
+
 

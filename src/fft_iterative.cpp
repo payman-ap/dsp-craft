@@ -1,9 +1,12 @@
 #include <iostream>
 #include <vector>
 #include <complex>
+#include <numbers>
+#include <cassert>
 
 
 using Complex = std::complex<double>;
+constexpr double PI = std::numbers::pi;
 
 void printVector(const std::vector<Complex>& vec, const std::string& name = "Vector")
 {
@@ -72,17 +75,65 @@ void bit_reverse(std::vector<Complex>& x)
     x = Temp;
 }
 
+std::vector<Complex> fft_iterative(const std::vector<Complex>& signal)
+{
+    size_t N = signal.size();
+    assert(N > 0);
+    assert((N & (N - 1)) == 0);
+    std::cout << "\n" << "FFT iterative: " << std::endl;
+    auto x = signal;
+    bit_reverse(x);
+    // Combine groups of len 2, 4, 8, ...
+    for (size_t len = 2; len <= N; len *= 2)
+    {
+        std::cout << "Stage with len = " << len << '\n';
+
+        size_t half = len / 2;
+
+        // Compute the fundamental twiddle factor for the current stage length
+        Complex Wlen = std::polar(1.0, -2.0 * PI * 1 / len);
+        
+        for (size_t start = 0; start < N; start += len)
+        {
+            Complex W = 1.0; // reset W to 1.0 for every block
+
+            std::cout << "Half: " << '\n';
+            for (size_t j = 0; j < half; ++j)
+            {    
+                size_t i1 = start + j;
+                size_t i2 = start + j + half;
+                // std::cout << i1 << " <-> " << i2 << '\n'; // to be replaced with the butterfly
+                // Complex W = std::polar(1.0, -2.0 * PI * j / len);
+                Complex u = x[i1];
+                Complex v = W * x[i2];
+                x[i1] = u + v;
+                x[i2] = u - v;
+                std::cout << "W(" << j << ") = " << W << '\n';
+
+                W *= Wlen; // advance twiddle factor for the next iteration
+            }
+            std::cout << '\n';
+
+        }
+        
+    }
+
+    return x;
+
+}
+
+
 
 int main()
 {
     // std::vector<Complex> signal = { 3,1,2,4,5,7,6,8 };
     std::vector<Complex> signal = { 0,1,2,3,4,5,6,7 };
-    
-    bit_reverse(signal);
-
-    printVector(signal, "REV");
 
     std::cout << "Bit size: " << log2(8) << std::endl;
+
+    auto spectrum = fft_iterative(signal);
+
+    printVector(spectrum, "FFT");
 
     return 0;
 }

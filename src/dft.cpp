@@ -112,6 +112,71 @@ std::vector<Complex> fft(const std::vector<Complex>& x, int depth = 0)
 }
 
 
+void bit_reverse(std::vector<Complex>& x)
+{
+    size_t N = x.size();
+    size_t j = 0;
+
+    for (size_t i = 0; i < N; ++i)
+    {
+        if (i < j)
+        {
+            std::swap(x[i], x[j]);
+        }
+
+        // Bitwise increment logic for bit-reversal permutation
+        size_t bit = N >> 1;
+        while (j & bit)
+        {
+            j ^= bit;
+            bit >>= 1;
+        }
+        j ^= bit;
+    }
+}
+
+std::vector<Complex> fft_iterative(const std::vector<Complex>& signal)
+{
+    size_t N = signal.size();
+    auto x = signal;
+    bit_reverse(x);
+    // Combine groups of len 2, 4, 8, ...
+    for (size_t len = 2; len <= N; len *= 2)
+    {
+        std::cout << "Stage with len = " << len << '\n';
+
+        size_t half = len / 2;
+
+        // Compute the fundamental twiddle factor for the current stage length
+        Complex Wlen = std::polar(1.0, -2.0 * PI * 1 / len);
+        
+        for (size_t start = 0; start < N; start += len)
+        {
+            Complex W = 1.0; // reset W to 1.0 for every block
+
+            for (size_t j = 0; j < half; ++j)
+            {    
+                size_t i1 = start + j;
+                size_t i2 = start + j + half;
+                // std::cout << i1 << " <-> " << i2 << '\n'; // to be replaced with the butterfly
+                // Complex W = std::polar(1.0, -2.0 * PI * j / len);
+                Complex u = x[i1];
+                Complex v = W * x[i2];
+                x[i1] = u + v;
+                x[i2] = u - v;
+
+                W *= Wlen; // advance twiddle factor for the next iteration
+            }
+
+        }
+        
+    }
+
+    return x;
+
+}
+
+
 int main()
 {
     // std::vector<Complex> signal = { 3,1,2,4,5,7,6,8 };
@@ -146,8 +211,17 @@ int main()
         (end_dft-start_dft)
         .count();
 
+    auto start_ffti = std::chrono::high_resolution_clock::now();
+    auto ffti_result = fft_iterative(signal);
+    auto end_ffti = std::chrono::high_resolution_clock::now();
+    auto duration_ffti =
+        std::chrono::duration<double, std::micro>
+        (end_ffti-start_ffti)
+        .count();
+
     std::cout << "FFT: " << duration_fft << " microseconds\n";
     std::cout << "DFT: " << duration_dft << " microseconds\n";
+    std::cout << "FFT Iterative: " << duration_ffti << " microseconds\n";
 
 
     // printVector(fft_result, "FFT");
