@@ -87,7 +87,25 @@ Real-time audio analyzer
 Mini DSP library
 ```
 
+### Ongoing
 
+```
+Window Functions
+        ↓
+Window tests
+        ↓
+CSV export helper
+        ↓
+Synthetic signal generator
+        ↓
+STFT
+        ↓
+Magnitude
+        ↓
+Spectrogram
+        ↓
+Image
+```
 
 
 

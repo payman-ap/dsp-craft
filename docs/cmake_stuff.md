@@ -1,3 +1,6 @@
+# First VErsion
+
+```cmake
 cmake_minimum_required(VERSION 3.20)
 project(algo_craft LANGUAGES CXX)
 
@@ -30,51 +33,45 @@ else()
 endif()
 
 # ------------------------------------------------------------------------------
-# Core Library Target
+# Executable 1: Discrete Fourier Transform (DFT)
 # ------------------------------------------------------------------------------
-add_library(dsp_craft STATIC
-    src/conv.cpp
+add_executable(run_dft
     src/dft.cpp
-    src/fft.cpp
-    src/fft_iterative.cpp
-    src/spectrum.cpp
-    src/windows.cpp
 )
+target_include_directories(run_dft PRIVATE include)
 
-target_include_directories(dsp_craft PUBLIC include)
+# ------------------------------------------------------------------------------
+# Executable 2: Fast Fourier Transform (FFT)
+# ------------------------------------------------------------------------------
+add_executable(run_fft
+    src/fft.cpp
+)
+target_include_directories(run_fft PRIVATE include)
 
-# option(FFT_DEBUG "Enable verbose FFT stage/twiddle-factor tracing" OFF)
+# ------------------------------------------------------------------------------
+# Executable 3: Convolution
+# ------------------------------------------------------------------------------
+add_executable(run_conv
+    src/conv.cpp
+    src/fft_iterative.cpp
+)
+option(FFT_DEBUG "Enable verbose FFT stage/twiddle-factor tracing" OFF)
 if(FFT_DEBUG)
-    target_compile_definitions(dsp_craft PRIVATE FFT_DEBUG)
+    target_compile_definitions(run_conv PRIVATE FFT_DEBUG)
 endif()
+target_include_directories(run_conv PRIVATE include)
 
 # ------------------------------------------------------------------------------
-# Test Executables (tests/)
+# Executable 4: Convolution Benchmarking
 # ------------------------------------------------------------------------------
-add_executable(test_conv tests/test_conv.cpp)
-target_link_libraries(test_conv PRIVATE dsp_craft)
+add_executable(run_conv_bench
+    examples/conv_bench.cpp
+    src/fft_iterative.cpp
+)
+target_include_directories(run_conv_bench PRIVATE include)
 
-add_executable(test_fft tests/test_fft.cpp)
-target_link_libraries(test_fft PRIVATE dsp_craft)
 
-add_executable(test_ifft tests/test_ifft.cpp)
-target_link_libraries(test_ifft PRIVATE dsp_craft)
+```
 
-add_executable(test_stft tests/test_stft.cpp)
-target_link_libraries(test_stft PRIVATE dsp_craft)
 
-# ------------------------------------------------------------------------------
-# Example & Benchmark Executables (examples/)
-# ------------------------------------------------------------------------------
-add_executable(benchmark_conv examples/benchmark_conv.cpp)
-target_link_libraries(benchmark_conv PRIVATE dsp_craft)
-
-add_executable(benchmark_fft examples/benchmark_fft.cpp)
-target_link_libraries(benchmark_fft PRIVATE dsp_craft)
-
-add_executable(example_stft examples/example_stft.cpp)
-target_link_libraries(example_stft PRIVATE dsp_craft)
-
-add_executable(example_window examples/example_window.cpp)
-target_link_libraries(example_window PRIVATE dsp_craft)
 
