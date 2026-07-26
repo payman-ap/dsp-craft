@@ -80,6 +80,27 @@ bool saveColumnsToCSV(const std::string& filename, const std::vector<std::string
     return true;
 }
 
+
+// Export a 2D matrix (e.g., STFT magnitude/phase) to CSV
+template <typename T>
+bool saveMatrixToCSV(const std::string& filename, const std::vector<std::vector<T>>& matrix)
+{
+    std::ofstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "Error: Could not open file " << filename << " for writing.\n";
+        return false;
+    }
+
+    for (const auto& row : matrix) {
+        for (std::size_t i = 0; i < row.size(); ++i) {
+            file << row[i] << (i + 1 < row.size() ? "," : "\n");
+        }
+    }
+
+    std::cout << "Successfully exported 2D matrix (" << matrix.size() << " rows) to " << filename << "\n";
+    return true;
+}
+
 } // namespace dsp
 
 #endif // HELPER_FCNS_HPP

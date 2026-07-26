@@ -90,17 +90,17 @@ Mini DSP library
 ### Ongoing
 
 ```
-Window Functions
+✓ Window Functions
         ↓
-Window tests
+✓ Window tests
         ↓
-CSV export helper
+✓ CSV export helper
         ↓
-Synthetic signal generator
+✓ Synthetic signal generator
         ↓
 STFT
         ↓
-Magnitude
+✓ Magnitude
         ↓
 Spectrogram
         ↓
@@ -112,4 +112,25 @@ Image
 ## Next ideas
 
 STFT, filters, spectrum analyzers, real-time DSP
+
+
+FFT
+│
+├── Convolution
+├── STFT
+├── Spectrogram
+├── Overlap-add
+├── ISTFT
+├── Mel filter bank
+├── MFCC
+├── Phase vocoder
+├── Pitch shifting
+└── Time stretching
+
+
+
+
+
+
+
 

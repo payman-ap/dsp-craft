@@ -39,6 +39,8 @@ add_library(dsp_craft STATIC
     src/fft_iterative.cpp
     src/spectrum.cpp
     src/windows.cpp
+    src/signals.cpp
+    src/spectrum.cpp
 )
 
 target_include_directories(dsp_craft PUBLIC include)
@@ -77,4 +79,18 @@ target_link_libraries(example_stft PRIVATE dsp_craft)
 
 add_executable(example_window examples/example_window.cpp)
 target_link_libraries(example_window PRIVATE dsp_craft)
+
+add_executable(example_signals examples/example_signals.cpp)
+target_link_libraries(example_signals PRIVATE dsp_craft)
+
+add_executable(test_spectrum tests/test_spectrum.cpp)
+target_link_libraries(test_spectrum PRIVATE dsp_craft)
+
+
+# ------------------------------------------------------------------------------
+# Executables (src/)
+# ------------------------------------------------------------------------------
+
+add_executable(run_stft src/stft.cpp)
+target_link_libraries(run_stft PRIVATE dsp_craft)
 
