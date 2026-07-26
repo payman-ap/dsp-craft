@@ -46,11 +46,24 @@ add_executable(run_fft
 target_include_directories(run_fft PRIVATE include)
 
 # ------------------------------------------------------------------------------
-# Executable 3: Bit Reverse
+# Executable 3: Convolution
 # ------------------------------------------------------------------------------
-add_executable(run_bitrev
+add_executable(run_conv
+    src/conv.cpp
     src/fft_iterative.cpp
 )
-target_include_directories(run_bitrev PRIVATE include)
+option(FFT_DEBUG "Enable verbose FFT stage/twiddle-factor tracing" OFF)
+if(FFT_DEBUG)
+    target_compile_definitions(run_conv PRIVATE FFT_DEBUG)
+endif()
+target_include_directories(run_conv PRIVATE include)
 
+# ------------------------------------------------------------------------------
+# Executable 4: Convolution Benchmarking
+# ------------------------------------------------------------------------------
+add_executable(run_conv_bench
+    src/conv_bench.cpp
+    src/fft_iterative.cpp
+)
+target_include_directories(run_conv_bench PRIVATE include)
 

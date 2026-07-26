@@ -30,7 +30,7 @@ make -j
         ↓
 ✓ Inverse FFT
         ↓
-FFT-based convolution
+✓ FFT-based convolution
         ↓
 Audio spectrum analyzer
         ↓
@@ -39,5 +39,30 @@ STFT
 Real-time DSP projects
 ```
 
+### Convolution roadmap:
 
+```
+✓ Time-domain convolution
+        ↓
+✓ Naive C++ implementation
+        ↓
+✓ Verify with small examples
+        ↓
+✓ Understand circular convolution
+        ↓
+✓ Zero-padding (FFT Friendly?! power of 2)
+        ↓
+✓ FFT convolution
+        ↓
+✓ Compare outputs
+        ↓
+✓ Benchmark O(N²) vs O(N log N)
+```
+
+
+
+
+## Next ideas
+
+STFT, filters, spectrum analyzers, real-time DSP
 

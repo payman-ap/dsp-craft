@@ -8,16 +8,15 @@
 using Complex = std::complex<double>;
 constexpr double PI = std::numbers::pi;
 
-void printVector(const std::vector<Complex>& vec, const std::string& name = "Vector")
-{
-    std::cout << name << ": [";
-    for (size_t i = 0; i < vec.size(); ++i) {
-        std::cout << vec[i];
-        if (i < vec.size() - 1) std::cout << ", ";
-    }
-    std::cout << "]" << std::endl;
-}
-
+// void printVector(const std::vector<Complex>& vec, const std::string& name = "Vector")
+// {
+//     std::cout << name << ": [";
+//     for (size_t i = 0; i < vec.size(); ++i) {
+//         std::cout << vec[i];
+//         if (i < vec.size() - 1) std::cout << ", ";
+//     }
+//     std::cout << "]" << std::endl;
+// }
 
 
 void bit_reverse(std::vector<Complex>& x)
@@ -75,18 +74,44 @@ void bit_reverse(std::vector<Complex>& x)
     x = Temp;
 }
 
+
+void bit_reverse_adv(std::vector<Complex>& x)
+{
+    size_t N = x.size();
+    size_t j = 0;
+
+    for (size_t i = 0; i < N; ++i)
+    {
+        if (i < j)
+        {
+            std::swap(x[i], x[j]);
+        }
+
+        // Bitwise increment logic for bit-reversal permutation
+        size_t bit = N >> 1;
+        while (j & bit)
+        {
+            j ^= bit;
+            bit >>= 1;
+        }
+        j ^= bit;
+    }
+}
+
 std::vector<Complex> fft_iterative(const std::vector<Complex>& signal)
 {
     size_t N = signal.size();
     assert(N > 0);
     assert((N & (N - 1)) == 0);
-    std::cout << "\n" << "FFT iterative: " << std::endl;
+    // std::cout << "\n" << "FFT iterative: " << std::endl;
     auto x = signal;
-    bit_reverse(x);
+    bit_reverse_adv(x);
     // Combine groups of len 2, 4, 8, ...
     for (size_t len = 2; len <= N; len *= 2)
     {
-        std::cout << "Stage with len = " << len << '\n';
+        #ifdef FFT_DEBUG
+            std::cout << "Stage with len = " << len << '\n';
+        #endif
 
         size_t half = len / 2;
 
@@ -97,7 +122,10 @@ std::vector<Complex> fft_iterative(const std::vector<Complex>& signal)
         {
             Complex W = 1.0; // reset W to 1.0 for every block
 
-            std::cout << "Half: " << '\n';
+            #ifdef FFT_DEBUG
+                std::cout << "Half: " << '\n';
+            #endif
+
             for (size_t j = 0; j < half; ++j)
             {    
                 size_t i1 = start + j;
@@ -108,12 +136,17 @@ std::vector<Complex> fft_iterative(const std::vector<Complex>& signal)
                 Complex v = W * x[i2];
                 x[i1] = u + v;
                 x[i2] = u - v;
-                std::cout << "W(" << j << ") = " << W << '\n';
+
+                #ifdef FFT_DEBUG
+                    std::cout << "W(" << j << ") = " << W << '\n';
+                #endif
 
                 W *= Wlen; // advance twiddle factor for the next iteration
             }
-            std::cout << '\n';
 
+            #ifdef FFT_DEBUG
+                std::cout << '\n';
+            #endif
         }
         
     }
@@ -122,8 +155,30 @@ std::vector<Complex> fft_iterative(const std::vector<Complex>& signal)
 
 }
 
+// Inverse FFT using the conjugate trick: IFFT(X) = 1/N * conj(FFT(conj(X)))
+std::vector<Complex> ifft_iterative(const std::vector<Complex>& X)
+{
+    size_t N = X.size();
+    std::vector<Complex> x(N);
+
+    // 1. Take complex conjugate of input spectrum
+    for (size_t i = 0; i < N; ++i) {
+        x[i] = std::conj(X[i]);
+    }
+
+    // 2. Run standard forward FFT
+    x = fft_iterative(x);
+
+    // 3. Take complex conjugate again and scale by 1/N
+    for (size_t i = 0; i < N; ++i) {
+        x[i] = std::conj(x[i]) / static_cast<double>(N);
+    }
+
+    return x;
+}
 
 
+#ifdef FFT_STANDALONE
 int main()
 {
     // std::vector<Complex> signal = { 3,1,2,4,5,7,6,8 };
@@ -137,4 +192,5 @@ int main()
 
     return 0;
 }
+#endif
 
