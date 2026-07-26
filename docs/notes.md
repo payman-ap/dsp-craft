@@ -34,7 +34,7 @@ make -j
         ↓
 Audio spectrum analyzer
         ↓
-STFT
+✓ STFT
         ↓
 Real-time DSP projects
 ```
@@ -98,13 +98,13 @@ Mini DSP library
         ↓
 ✓ Synthetic signal generator
         ↓
-STFT
+✓ STFT
         ↓
 ✓ Magnitude
         ↓
-Spectrogram
+✓ Spectrogram
         ↓
-Image
+✓ Image
 ```
 
 
@@ -116,9 +116,9 @@ STFT, filters, spectrum analyzers, real-time DSP
 
 FFT
 │
-├── Convolution
-├── STFT
-├── Spectrogram
+├── ✓ Convolution
+├── ✓ STFT
+├── ✓ Spectrogram
 ├── Overlap-add
 ├── ISTFT
 ├── Mel filter bank
