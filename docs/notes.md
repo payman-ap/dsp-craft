@@ -59,6 +59,35 @@ Real-time DSP projects
 ✓ Benchmark O(N²) vs O(N log N)
 ```
 
+## Advanced Roadmap
+
+```
+✓ FFT
+        ↓
+✓ IFFT
+        ↓
+✓ FFT convolution
+        ↓
+✓ Window functions
+        ↓
+✓ STFT
+        ↓
+✓ Spectrogram
+        ↓
+Mel Spectrogram
+        ↓
+Overlap-Add reconstruction
+        ↓
+ISTFT
+        ↓
+Phase vocoder
+        ↓
+Real-time audio analyzer
+        ↓
+Mini DSP library
+```
+
+
 
 
 
