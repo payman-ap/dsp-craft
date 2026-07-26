@@ -6,19 +6,22 @@
 #include <random>
 #include <chrono>
 
+
+namespace dsp {
+
 using Complex = std::complex<double>;
 constexpr double PI = std::numbers::pi;
 // constexpr double PI = 3.14159265358979323846;
 
-void printVector(const std::vector<Complex>& vec, const std::string& name = "Vector")
-{
-    std::cout << name << ": [";
-    for (size_t i = 0; i < vec.size(); ++i) {
-        std::cout << vec[i];
-        if (i < vec.size() - 1) std::cout << ", ";
-    }
-    std::cout << "]" << std::endl;
-}
+// void printVector(const std::vector<Complex>& vec, const std::string& name = "Vector")
+// {
+//     std::cout << name << ": [";
+//     for (size_t i = 0; i < vec.size(); ++i) {
+//         std::cout << vec[i];
+//         if (i < vec.size() - 1) std::cout << ", ";
+//     }
+//     std::cout << "]" << std::endl;
+// }
 
 double magnitudeDifference(
     const std::vector<Complex>& a,
@@ -59,178 +62,64 @@ std::vector<Complex> dft(const std::vector<Complex>& x)
     return X;
 }
 
-std::vector<Complex> fft(const std::vector<Complex>& x, int depth = 0)
-{
-    size_t N = x.size();
-    std::vector<Complex> even;
-    std::vector<Complex> odd;
-    even.reserve(N / 2); // append:reserve but no allocation/construction, will be added with .push_back() 
-    odd.reserve(N / 2);
-    std::vector<Complex> X(N); // assign: using indexing to allocate the elements
+} // namespace dsp
 
-    // std::cout << "fft called with N = " << N << '\n';
-    std::string indent(depth * 2, ' '); // constructor of length n, character c
-    // std::cout << indent << "fft(N=" << N << ")\n";
 
-    // the base case
-    if (N == 1)
-    {
-        return x;
-    }
+
+// int main()
+// {
+//     // std::vector<Complex> signal = { 3,1,2,4,5,7,6,8 };
+//     constexpr std::size_t N = 4096;
+
+//     // Random generator: real and imaginary parts in [-1.0, 1.0]
+//     std::random_device rd;
+//     std::mt19937 gen(rd());
+//     std::uniform_real_distribution<double> dist(-1.0, 1.0);
+
+//     std::vector<Complex> signal;
+//     signal.reserve(N);
+//     for (std::size_t i = 0; i < N; ++i) {
+//         double re = dist(gen);
+//         double im = dist(gen);
+//         signal.emplace_back(re, im);
+//     }
     
-    // split the input in even and odd
-    for (size_t i = 0; i < N; i++)
-    {
-        if (i % 2 == 0)
-        {
-            even.push_back(x[i]);
-        }
-        else
-        {
-            odd.push_back(x[i]);
-        }
-            
-    }
+//     auto start_fft = std::chrono::high_resolution_clock::now();
+//     auto fft_result = fft(signal);
+//     auto end_fft = std::chrono::high_resolution_clock::now();
+//     auto duration_fft =
+//         std::chrono::duration<double, std::micro>
+//         (end_fft-start_fft)
+//         .count();
 
-    // printVector(even, "Even");
-    // printVector(odd, "Odd");
+//     auto start_dft = std::chrono::high_resolution_clock::now();
+//     auto dft_result = dft(signal);
+//     auto end_dft = std::chrono::high_resolution_clock::now();
+//     auto duration_dft =
+//         std::chrono::duration<double, std::micro>
+//         (end_dft-start_dft)
+//         .count();
 
-    auto E = fft(even, depth + 1);
-    auto O = fft(odd, depth + 1);
+//     auto start_ffti = std::chrono::high_resolution_clock::now();
+//     auto ffti_result = fft_iterative(signal);
+//     auto end_ffti = std::chrono::high_resolution_clock::now();
+//     auto duration_ffti =
+//         std::chrono::duration<double, std::micro>
+//         (end_ffti-start_ffti)
+//         .count();
 
-    for (size_t k = 0; k < N / 2; ++k)
-    {
-        Complex W = std::polar(1.0, -2.0 * PI * k / N);
-
-        Complex t = W * O[k];
-
-        X[k] = E[k] + t;
-        X[k + N/2] = E[k] - t;
-    }
-
-    return X;
-}
+//     std::cout << "FFT: " << duration_fft << " microseconds\n";
+//     std::cout << "DFT: " << duration_dft << " microseconds\n";
+//     std::cout << "FFT Iterative: " << duration_ffti << " microseconds\n";
 
 
-void bit_reverse(std::vector<Complex>& x)
-{
-    size_t N = x.size();
-    size_t j = 0;
+//     // printVector(fft_result, "FFT");
+//     // printVector(dft_result, "DFT");
 
-    for (size_t i = 0; i < N; ++i)
-    {
-        if (i < j)
-        {
-            std::swap(x[i], x[j]);
-        }
+//     std::cout 
+//         << "Error = "
+//         << magnitudeDifference(fft_result,dft_result)
+//         << "\n";
 
-        // Bitwise increment logic for bit-reversal permutation
-        size_t bit = N >> 1;
-        while (j & bit)
-        {
-            j ^= bit;
-            bit >>= 1;
-        }
-        j ^= bit;
-    }
-}
-
-std::vector<Complex> fft_iterative(const std::vector<Complex>& signal)
-{
-    size_t N = signal.size();
-    auto x = signal;
-    bit_reverse(x);
-    // Combine groups of len 2, 4, 8, ...
-    for (size_t len = 2; len <= N; len *= 2)
-    {
-        std::cout << "Stage with len = " << len << '\n';
-
-        size_t half = len / 2;
-
-        // Compute the fundamental twiddle factor for the current stage length
-        Complex Wlen = std::polar(1.0, -2.0 * PI * 1 / len);
-        
-        for (size_t start = 0; start < N; start += len)
-        {
-            Complex W = 1.0; // reset W to 1.0 for every block
-
-            for (size_t j = 0; j < half; ++j)
-            {    
-                size_t i1 = start + j;
-                size_t i2 = start + j + half;
-                // std::cout << i1 << " <-> " << i2 << '\n'; // to be replaced with the butterfly
-                // Complex W = std::polar(1.0, -2.0 * PI * j / len);
-                Complex u = x[i1];
-                Complex v = W * x[i2];
-                x[i1] = u + v;
-                x[i2] = u - v;
-
-                W *= Wlen; // advance twiddle factor for the next iteration
-            }
-
-        }
-        
-    }
-
-    return x;
-
-}
-
-
-int main()
-{
-    // std::vector<Complex> signal = { 3,1,2,4,5,7,6,8 };
-    constexpr std::size_t N = 4096;
-
-    // Random generator: real and imaginary parts in [-1.0, 1.0]
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<double> dist(-1.0, 1.0);
-
-    std::vector<Complex> signal;
-    signal.reserve(N);
-    for (std::size_t i = 0; i < N; ++i) {
-        double re = dist(gen);
-        double im = dist(gen);
-        signal.emplace_back(re, im);
-    }
-    
-    auto start_fft = std::chrono::high_resolution_clock::now();
-    auto fft_result = fft(signal);
-    auto end_fft = std::chrono::high_resolution_clock::now();
-    auto duration_fft =
-        std::chrono::duration<double, std::micro>
-        (end_fft-start_fft)
-        .count();
-
-    auto start_dft = std::chrono::high_resolution_clock::now();
-    auto dft_result = dft(signal);
-    auto end_dft = std::chrono::high_resolution_clock::now();
-    auto duration_dft =
-        std::chrono::duration<double, std::micro>
-        (end_dft-start_dft)
-        .count();
-
-    auto start_ffti = std::chrono::high_resolution_clock::now();
-    auto ffti_result = fft_iterative(signal);
-    auto end_ffti = std::chrono::high_resolution_clock::now();
-    auto duration_ffti =
-        std::chrono::duration<double, std::micro>
-        (end_ffti-start_ffti)
-        .count();
-
-    std::cout << "FFT: " << duration_fft << " microseconds\n";
-    std::cout << "DFT: " << duration_dft << " microseconds\n";
-    std::cout << "FFT Iterative: " << duration_ffti << " microseconds\n";
-
-
-    // printVector(fft_result, "FFT");
-    // printVector(dft_result, "DFT");
-
-    std::cout 
-        << "Error = "
-        << magnitudeDifference(fft_result,dft_result)
-        << "\n";
-
-    return 0;
-}
+//     return 0;
+// }

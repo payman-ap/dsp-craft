@@ -1,24 +1,26 @@
+#include "fft.hpp"
 #include <iostream>
-#include <vector>
 #include <cstddef>
 #include <complex>
 #include <numbers>
+
+namespace dsp {
 
 using Complex = std::complex<double>;
 constexpr double PI = std::numbers::pi;
 // constexpr double PI = 3.14159265358979323846;
 
-void printVector(const std::vector<Complex>& vec, const std::string& name = "Vector")
-{
-    std::cout << name << ": [";
-    for (size_t i = 0; i < vec.size(); ++i) {
-        std::cout << vec[i];
-        if (i < vec.size() - 1) std::cout << ", ";
-    }
-    std::cout << "]" << std::endl;
-}
+// void printVector(const std::vector<Complex>& vec, const std::string& name)
+// {
+//     std::cout << name << ": [";
+//     for (size_t i = 0; i < vec.size(); ++i) {
+//         std::cout << vec[i];
+//         if (i < vec.size() - 1) std::cout << ", ";
+//     }
+//     std::cout << "]" << std::endl;
+// }
 
-std::vector<Complex> fft(const std::vector<Complex>& x, int depth = 0)
+std::vector<Complex> fft(const std::vector<Complex>& x, int depth)
 {
     size_t N = x.size();
     std::vector<Complex> even;
@@ -51,8 +53,8 @@ std::vector<Complex> fft(const std::vector<Complex>& x, int depth = 0)
             
     }
 
-    printVector(even, "Even");
-    printVector(odd, "Odd");
+    // printVector(even, "Even");
+    // printVector(odd, "Odd");
 
     auto E = fft(even, depth + 1);
     auto O = fft(odd, depth + 1);
@@ -89,7 +91,9 @@ std::vector<Complex> ifft(const std::vector<Complex>& X)
     return result;
 }
 
+} // namespace dsp
 
+#ifdef FFT_STANDALONE
 int main()
 {
     std::vector<Complex> signal = { 3,1,2,4,5,7,6,8 };
@@ -104,3 +108,5 @@ int main()
 
     return 0;
 }
+#endif
+

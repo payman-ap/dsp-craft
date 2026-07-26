@@ -1,23 +1,16 @@
+#include "fft_iterative.hpp"
 #include <iostream>
 #include <vector>
 #include <complex>
 #include <numbers>
 #include <cassert>
+#include <cmath>
+#include <algorithm>
 
+namespace dsp {
 
 using Complex = std::complex<double>;
 constexpr double PI = std::numbers::pi;
-
-// void printVector(const std::vector<Complex>& vec, const std::string& name = "Vector")
-// {
-//     std::cout << name << ": [";
-//     for (size_t i = 0; i < vec.size(); ++i) {
-//         std::cout << vec[i];
-//         if (i < vec.size() - 1) std::cout << ", ";
-//     }
-//     std::cout << "]" << std::endl;
-// }
-
 
 void bit_reverse(std::vector<Complex>& x)
 {
@@ -74,7 +67,7 @@ void bit_reverse(std::vector<Complex>& x)
     x = Temp;
 }
 
-
+// Optimized, in-place bit reversal permutation
 void bit_reverse_adv(std::vector<Complex>& x)
 {
     size_t N = x.size();
@@ -98,6 +91,7 @@ void bit_reverse_adv(std::vector<Complex>& x)
     }
 }
 
+// Iterative Cooley-Tukey Radix-2 FFT
 std::vector<Complex> fft_iterative(const std::vector<Complex>& signal)
 {
     size_t N = signal.size();
@@ -177,6 +171,7 @@ std::vector<Complex> ifft_iterative(const std::vector<Complex>& X)
     return x;
 }
 
+} // namespace dsp
 
 #ifdef FFT_STANDALONE
 int main()

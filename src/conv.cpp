@@ -8,16 +8,7 @@
 
 using Complex = std::complex<double>;
 
-template <typename T>
-void printVector(const std::vector<T>& vec, const std::string& name = "Vector")
-{
-    std::cout << name << ": [";
-    for (size_t i = 0; i < vec.size(); ++i) {
-        std::cout << vec[i];
-        if (i < vec.size() - 1) std::cout << ", ";
-    }
-    std::cout << "]" << std::endl;
-}
+namespace dsp {
 
 std::vector<double> conv(const std::vector<double>& x, const std::vector<double>& h)
 {
@@ -110,32 +101,7 @@ std::vector<double> fftconv(const std::vector<double>& x, const std::vector<doub
     return y;
 }
 
+} // namespace dsp
 
 
-int main ()
-{
-    std::vector<double> x = {1,2,3};
-    std::vector<double> h = {1,-1};
-    auto y = conv(x, h);
-    printVector(y, "CONV");
-
-    // Case 1: Default N (N = 3 + 2 - 1 = 4). Automatically zero-pads!
-    // Gives exact linear convolution output.
-    auto yc_default = cconv(x, h);
-    printVector(yc_default, "CCONV (Default)"); 
-
-    // Case 2: Explicit N = 3 (Unpadded circular convolution)
-    // Causes time-domain aliasing (wrapping)
-    auto yc_3 = cconv(x, h, 3);
-    printVector(yc_3, "CCONV (N=3, Aliased)");
-
-    // Case 3: Explicit N = 6 (Extra zero-padding)
-    auto yc_6 = cconv(x, h, 6);
-    printVector(yc_6, "CCONV (N=6, Extra Padded)");
-
-    auto yfft = fftconv(x, h);
-    printVector(yfft, "FFT CONV");
-
-    return 0;
-}
 
