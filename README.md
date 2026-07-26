@@ -1,4 +1,4 @@
-# algo-craft
+# dsp-craft
 
 A lightweight, zero-dependency C++20 library and playground for implementing fundamental numerical, digital signal processing (DSP), and algorithmic primitives from scratch.
 
@@ -6,7 +6,7 @@ A lightweight, zero-dependency C++20 library and playground for implementing fun
 
 ## 🎯 Purpose
 
-The goal of **algo-craft** is to unpack complex mathematical and signal processing algorithms by building them from first principles using modern C++20. By avoiding heavy external dependencies, this project focuses on clear logic, mathematical correctness, and understanding low-level performance characteristics.
+The goal of **dsp-craft** is to unpack complex mathematical and signal processing algorithms by building them from first principles using modern C++20. By avoiding heavy external dependencies, this project focuses on clear logic, mathematical correctness, and understanding low-level performance characteristics.
 
 ---
 
@@ -22,9 +22,9 @@ The goal of **algo-craft** is to unpack complex mathematical and signal processi
 ## 📁 Project Structure
 
 ```text
-algo-craft/
+dsp-craft/
 ├── include/
-│   └── algo_craft/     # Header files & algorithm interfaces
+│   └── dsp_craft/     # Header files & algorithm interfaces
 ├── src/                # Source files & executable entry points
 │   ├── dft.cpp
 │   └── fft.cpp
