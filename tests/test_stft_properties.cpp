@@ -3,7 +3,7 @@
 #include <cmath>
 #include <random>
 #include "stft.hpp"
-#include "signals.hpp" // Assumes you have your signal generators here
+#include "signals.hpp"
 
 namespace dsp {
 namespace test {
@@ -21,7 +21,7 @@ void verify_perfect_reconstruction(const std::vector<double>& original_signal,
     // 2. Inverse STFT
     std::vector<double> reconstructed = istft(stft_result);
 
-    // 3. Verify lengths match (thanks to your automatic trimming!)
+    // 3. Verify lengths match (using automatic trimming!)
     ASSERT_EQ(original_signal.size(), reconstructed.size());
 
     // 4. Verify sample-by-sample equality within tolerance
