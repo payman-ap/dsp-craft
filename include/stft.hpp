@@ -16,11 +16,25 @@ namespace dsp {
 
 using Complex = std::complex<double>;
 
+// Metadata for STFT parameters
+struct STFTConfig {
+    size_t fft_size;
+    size_t hop_size;
+    WindowType window;
+};
+
+// Container holding metadata + STFT matrix
+struct STFTResult {
+    STFTConfig config;
+    std::vector<std::vector<Complex>> spectra; // 2D Vector
+};
+
+
 std::vector<double> extract_frame( const std::vector<double>& signal, size_t start, size_t window_size );
 void apply_window(std::vector<double>& frame, const std::vector<double>& window);
 
 
-std::vector<std::vector<Complex>> stft( const std::vector<double>& signal, size_t window_size, size_t hop_size, WindowType type);
+STFTResult stft(const std::vector<double>& signal, size_t window_size, size_t hop_size, WindowType type);
 
 
 

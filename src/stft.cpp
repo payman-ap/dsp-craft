@@ -30,22 +30,23 @@ void apply_window(std::vector<double>& frame, const std::vector<double>& window)
     }
 }
 
-std::vector<std::vector<Complex>> stft( const std::vector<double>& signal, size_t window_size, size_t hop_size, WindowType type)
+STFTResult stft( const std::vector<double>& signal, size_t window_size, size_t hop_size, WindowType type)
 {
-    std::vector<std::vector<Complex>> stft_matrix;
+    STFTResult result;
+    result.config = { window_size, hop_size, type };
 
     // Safety checks
     if (signal.empty() || window_size == 0 || hop_size == 0 || signal.size() < window_size)
     {
-        return stft_matrix;
+        return result;
     }
 
     // 1. Generate window coefficients
     std::vector<double> win = create_window(window_size, type, true);
 
     // 2. Calculate the number of total frames
-    size_t num_frames = (signal.size() - window_size) / hop_size + 1;
-    stft_matrix.reserve(num_frames);
+    size_t num_frames = (signal.size() + hop_size - 1) / hop_size;
+    result.spectra.reserve(num_frames);
 
     // 3. Iterate over the signal with step size `hop_size`
     // for (size_t start = 0; start + window_size <= signal.size(); start += hop_size)
@@ -66,12 +67,12 @@ std::vector<std::vector<Complex>> stft( const std::vector<double>& signal, size_
         X = fft_iterative(X);
 
         // Append the frame spectrum to the matrix
-        stft_matrix.push_back(std::move(X));
+        result.spectra.push_back(std::move(X));
 
 
     }
 
-    return stft_matrix;
+    return result;
 
 
 }
@@ -85,23 +86,24 @@ int main ()
 {
     constexpr std::size_t window_size = 512;
     constexpr std::size_t hop_size    = 128;
-
-    constexpr double fs = 44100.0;
-    constexpr double duration = 1.0; // 1000 ms ensures signal length > window_size
-    auto sig_chirp = dsp::generate_chirp(140.0, 20000.0, fs, duration, 1.0);
     
+
     // --- Test 1: Simple Signal ---
     std::vector<double> signal = {0,1,2,3,4,5,6,7};
     size_t small_win_size = 4;
-    auto stft_matrix = dsp::stft(signal, small_win_size, 2, dsp::WindowType::Rectangular);
-    auto stft_mag = dsp::magnitude(stft_matrix);
+    auto stft_result = dsp::stft(signal, small_win_size, 2, dsp::WindowType::Rectangular);
+    auto stft_mag = dsp::magnitude(stft_result.spectra);
     dsp::saveMatrixToCSV("stft_matrix.csv", stft_mag);
 
     // --- Test 2: Chirp Signal ---
+    constexpr double fs = 44100.0;
+    constexpr double duration = 1.0; // 1000 ms ensures signal length > window_size
+    auto sig_chirp = dsp::generate_chirp(140.0, 20000.0, fs, duration, 1.0);
+
     auto stft_chirp = dsp::stft(sig_chirp, window_size, hop_size, dsp::WindowType::Hann);
-    auto stft_mag_chirp = dsp::magnitude_db(stft_chirp);
+    auto stft_mag_chirp = dsp::magnitude_db(stft_chirp.spectra);
     dsp::saveMatrixToCSV("stft_chirp.csv", stft_mag_chirp);
-    auto spec = dsp::spectrogram(stft_chirp);
+    auto spec = dsp::spectrogram(stft_chirp.spectra);
     dsp::saveMatrixToCSV("spec.csv", spec);
 
 

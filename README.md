@@ -1,6 +1,6 @@
 # dsp-craft
 
-A lightweight, zero-dependency C++20 library and playground for implementing fundamental numerical, digital signal processing (DSP), and algorithmic primitives from scratch.
+A lightweight, zero-dependency C++20 library for implementing fundamental numerical, digital signal processing (DSP), and algorithmic primitives from scratch.
 
 ---
 
