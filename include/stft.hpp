@@ -26,6 +26,8 @@ struct STFTConfig {
 // Container holding metadata + STFT matrix
 struct STFTResult {
     STFTConfig config;
+    size_t original_signal_length{0};
+    std::vector<double> analysis_window;
     std::vector<std::vector<Complex>> spectra; // 2D Vector
 };
 
@@ -37,7 +39,8 @@ void apply_window(std::vector<double>& frame, const std::vector<double>& window)
 STFTResult stft(const std::vector<double>& signal, size_t window_size, size_t hop_size, WindowType type);
 
 
-
+// --- ISTFT ---
+std::vector<double> istft(const STFTResult& stft_result);
 
 } // namespace dsp
 

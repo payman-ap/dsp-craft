@@ -40,7 +40,7 @@ add_library(dsp_craft STATIC
     src/spectrum.cpp
     src/windows.cpp
     src/signals.cpp
-    src/spectrum.cpp
+    src/stft.cpp
 )
 
 target_include_directories(dsp_craft PUBLIC include)
@@ -64,6 +64,9 @@ target_link_libraries(test_ifft PRIVATE dsp_craft)
 
 add_executable(test_stft tests/test_stft.cpp)
 target_link_libraries(test_stft PRIVATE dsp_craft)
+
+add_executable(test_istft tests/test_istft.cpp)
+target_link_libraries(test_istft PRIVATE dsp_craft)
 
 # ------------------------------------------------------------------------------
 # Example & Benchmark Executables (examples/)
@@ -91,6 +94,21 @@ target_link_libraries(test_spectrum PRIVATE dsp_craft)
 # Executables (src/)
 # ------------------------------------------------------------------------------
 
-add_executable(run_stft src/stft.cpp)
-target_link_libraries(run_stft PRIVATE dsp_craft)
+# add_executable(run_stft src/stft.cpp)
+# target_link_libraries(run_stft PRIVATE dsp_craft)
+
+# ------------------------------------------------------------------------------
+# GoogleTest Suite
+# ------------------------------------------------------------------------------
+find_package(GTest REQUIRED)
+include(GoogleTest)
+
+# Add your property test executable
+add_executable(test_stft_properties tests/test_stft_properties.cpp)
+
+# Link against your library (dsp_craft) and GTest
+target_link_libraries(test_stft_properties PRIVATE dsp_craft GTest::gtest GTest::gtest_main)
+
+# Enables 'ctest' discovery
+gtest_discover_tests(test_stft_properties)
 
