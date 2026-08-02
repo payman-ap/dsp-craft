@@ -45,8 +45,9 @@ int main()
     double diff = unwrapped_ph[50] - unwrapped_ph[49];
     std::cout << "Unwrapped consecutive diff at sample 50: " << diff << " (Expected ~ -0.15)\n";
 
-    // 4. Test Polar to Complex Reconstruction
-    auto reconstructed = dsp::polar_to_complex(mag, wrapped_ph);
+// 4. Test Polar to Complex Reconstruction
+    auto phase_X = dsp::phase(X, false);
+    auto reconstructed = dsp::polar_to_complex(mag, phase_X);
     
     double max_err = 0.0;
     for (size_t i = 0; i < X.size(); ++i) {
@@ -55,7 +56,7 @@ int main()
     std::cout << "Reconstruction Error (Original vs Reconstructed Spectrum): " << max_err << "\n";
 
     if (max_err < 1e-10) {
-        std::cout << "\n>>> ALL SPECTRUM TESTS PASSED SUCCESSFULY! <<<\n";
+        std::cout << "\n>>> ALL SPECTRUM TESTS PASSED SUCCESSFULLY! <<<\n";
     } else {
         std::cout << "\n>>> TEST FAILED: Reconstruction error too high! <<<\n";
     }

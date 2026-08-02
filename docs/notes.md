@@ -32,9 +32,31 @@ make -j
         ↓
 ✓ FFT-based convolution
         ↓
-Audio spectrum analyzer
+✓ Window functions
         ↓
 ✓ STFT
+        ↓
+✓ Spectrogram
+        ↓
+✓ IFFT
+        ↓
+✓ Overlap-Add
+        ↓
+✓ ISTFT
+        ↓
+✓ Perfect reconstruction tests
+        ↓
+Mel spectrogram
+        ↓
+Phase vocoder
+        ↓
+Pitch shifting
+        ↓
+Time stretching
+        ↓
+Real-time audio spectrum analyzer
+        ↓
+Mini DSP library
         ↓
 Real-time DSP projects
 ```
@@ -133,4 +155,58 @@ The next features—Mel spectrograms, phase vocoder, time stretching
 
 GTest
 
+
+## To do:
+
+Magnitude/phase helper functions (small, reusable utilities)
+Spectrogram export (CSV or PGM image) to verify your STFT visually
+STFT utility class (clean accessors and decomposition helpers)
+Phase vocoder core (phase propagation only)
+Time stretching
+Pitch shifting
+Mel filter bank
+Mel spectrogram
+
+
+I'd wait until you start the phase vocoder. The temporal phase unwrapping depends on:
+
+hop size
+FFT size
+expected phase advance
+sample rate
+
+Those parameters belong to the phase-vocoder algorithm
+
+
+
+
+in STFTResult
+
+```cpp
+std::vector<std::vector<Complex>> spectra;
+```
+
+becomes
+
+
+```cpp
+size_t num_frames() const;
+size_t fft_size() const;
+
+const std::vector<Complex>& frame(size_t i) const;
+std::vector<Complex>& frame(size_t i);
+```
+
+phase vocoder
+
+```cpp
+for (size_t t = 1; t < stft.num_frames(); ++t)
+{
+    auto& current = stft.frame(t);
+    auto& previous = stft.frame(t - 1);
+
+    ...
+}
+
+```
 

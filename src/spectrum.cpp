@@ -9,6 +9,59 @@ constexpr double two_pi = 2.0 * std::numbers::pi;
 } // anonymous namespace
 
 // ---------------------------------------------------------------------------
+// Normalization Helpers
+// ---------------------------------------------------------------------------
+
+std::vector<double> normalize(const std::vector<double>& x)
+{
+    if (x.empty()) return {};
+
+    double max_val = 0.0;
+    for (double val : x) {
+        max_val = std::max(max_val, std::abs(val));
+    }
+
+    std::vector<double> result(x.size());
+    if (max_val < 1e-12) {
+        return result; // return zeros if max is near zero
+    }
+
+    for (size_t i = 0; i < x.size(); ++i) {
+        result[i] = x[i] / max_val;
+    }
+    return result;
+}
+
+std::vector<std::vector<double>> normalize(const std::vector<std::vector<double>>& x)
+{
+    if (x.empty()) return {};
+
+    double max_val = 0.0;
+    for (const auto& frame : x) {
+        for (double val : frame) {
+            max_val = std::max(max_val, std::abs(val));
+        }
+    }
+
+    std::vector<std::vector<double>> result(x.size());
+    if (max_val < 1e-12) {
+        for (size_t f = 0; f < x.size(); ++f) {
+            result[f].resize(x[f].size(), 0.0);
+        }
+        return result;
+    }
+
+    for (size_t f = 0; f < x.size(); ++f) {
+        result[f].resize(x[f].size());
+        for (size_t i = 0; i < x[f].size(); ++i) {
+            result[f][i] = x[f][i] / max_val;
+        }
+    }
+    return result;
+}
+
+
+// ---------------------------------------------------------------------------
 // Single Vector Implementations
 // ---------------------------------------------------------------------------
 
@@ -55,6 +108,96 @@ std::vector<Complex> polar_to_complex(const std::vector<double>& mag,
     }
     return X;
 }
+
+
+// ---------------------------------------------------------------------------
+
+std::vector<double> power(const std::vector<Complex>& X)
+{
+    std::vector<double> p(X.size());
+
+    for (size_t i = 0; i < X.size(); ++i)
+    {
+        p[i] = std::norm(X[i]); // avoids abs()*abs() and the square root (less expensive)
+    }
+
+    return p;
+}
+
+std::vector<double> power_db(const std::vector<Complex>& X,
+                             double eps)
+{
+    std::vector<double> p(X.size());
+
+    for (size_t i = 0; i < X.size(); ++i)
+    {
+        p[i] = 10.0 * std::log10(std::norm(X[i]) + eps);
+    }
+
+    return p;
+}
+
+std::vector<Complex> conjugate(const std::vector<Complex>& X)
+{
+    std::vector<Complex> Y(X.size());
+
+    for (size_t i = 0; i < X.size(); ++i)
+    {
+        Y[i] = std::conj(X[i]);
+    }
+
+    return Y;
+}
+
+std::vector<double> phase_difference(const std::vector<Complex>& current,
+                 const std::vector<Complex>& previous)
+{
+    const size_t N = std::min(current.size(), previous.size());
+
+    std::vector<double> delta(N);
+
+    for (size_t i = 0; i < N; ++i)
+    {
+        double diff = std::arg(current[i]) - std::arg(previous[i]);
+
+        while (diff > pi)
+            diff -= two_pi;
+
+        while (diff < -pi)
+            diff += two_pi;
+
+        delta[i] = diff;
+    }
+
+    return delta;
+}
+
+std::vector<double> frequency_bins(size_t fft_size, double sample_rate)
+{
+    std::vector<double> bins(fft_size / 2 + 1);
+
+    const double resolution = sample_rate / fft_size;
+
+    for (size_t k = 0; k < bins.size(); ++k)
+    {
+        bins[k] = k * resolution;
+    }
+
+    return bins;
+}
+
+double bin_to_frequency(size_t bin, size_t fft_size, double sample_rate)
+{
+    return static_cast<double>(bin) * sample_rate / fft_size;
+}
+
+size_t frequency_to_bin(double frequency, size_t fft_size, double sample_rate)
+{
+    return static_cast<size_t>(std::round(frequency * fft_size / sample_rate));
+}
+
+
+
 
 // ---------------------------------------------------------------------------
 // 2D Matrix Implementations
@@ -135,15 +278,91 @@ std::vector<double> unwrap_phase(const std::vector<double>& phase_rad)
     return unwrapped;
 }
 
+// ---------------------------------------------------------------------------
+
+std::vector<std::vector<double>> power(const std::vector<std::vector<Complex>>& stft)
+{
+    std::vector<std::vector<double>> result;
+    result.reserve(stft.size());
+
+    for (const auto& frame : stft)
+    {
+        result.push_back(power(frame));
+    }
+
+    return result;
+}
+
+std::vector<std::vector<double>> power_db(const std::vector<std::vector<Complex>>& stft, double eps)
+{
+    std::vector<std::vector<double>> result;
+    result.reserve(stft.size());
+
+    for (const auto& frame : stft)
+    {
+        result.push_back(power_db(frame, eps));
+    }
+
+    return result;
+}
+
+std::vector<std::vector<Complex>> conjugate(const std::vector<std::vector<Complex>>& stft)
+{
+    std::vector<std::vector<Complex>> result;
+    result.reserve(stft.size());
+
+    for (const auto& frame : stft)
+    {
+        result.push_back(conjugate(frame));
+    }
+
+    return result;
+}
+
+
+// ---------------------------------------------------------------------------
+// Spectrogram Implementations
+// ---------------------------------------------------------------------------
+
+std::vector<std::vector<double>> spectrogram_mag(const std::vector<std::vector<Complex>>& stft)
+{
+    auto mag = magnitude(stft);
+    for (auto& frame : mag) {
+        frame.resize(frame.size() / 2 + 1);
+    }
+    return mag;
+}
+
+std::vector<std::vector<double>> spectrogram_db(const std::vector<std::vector<Complex>>& stft, double eps)
+{
+    auto mag_db = magnitude_db(stft, eps);
+    for (auto& frame : mag_db) {
+        frame.resize(frame.size() / 2 + 1);
+    }
+    return mag_db;
+}
+
+std::vector<std::vector<double>> spectrogram_power(const std::vector<std::vector<Complex>>& stft)
+{
+    auto pow_mat = power(stft);
+    for (auto& frame : pow_mat) {
+        frame.resize(frame.size() / 2 + 1);
+    }
+    return pow_mat;
+}
+
+std::vector<std::vector<double>> spectrogram_power_db(const std::vector<std::vector<Complex>>& stft, double eps)
+{
+    auto pow_db = power_db(stft, eps);
+    for (auto& frame : pow_db) {
+        frame.resize(frame.size() / 2 + 1);
+    }
+    return pow_db;
+}
 
 std::vector<std::vector<double>> spectrogram(const std::vector<std::vector<Complex>>& stft)
 {
-    auto mag = magnitude(stft);
-
-    for (auto& frame : mag)
-        frame.resize(frame.size()/2 + 1);
-
-    return mag;
+    return spectrogram_mag(stft);
 }
 
 
