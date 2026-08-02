@@ -94,8 +94,8 @@ target_link_libraries(test_spectrum PRIVATE dsp_craft)
 # Executables (src/)
 # ------------------------------------------------------------------------------
 
-# add_executable(run_stft src/stft.cpp)
-# target_link_libraries(run_stft PRIVATE dsp_craft)
+add_executable(run_phase examples/example_phase.cpp)
+target_link_libraries(run_phase PRIVATE dsp_craft)
 
 # ------------------------------------------------------------------------------
 # GoogleTest Suite
