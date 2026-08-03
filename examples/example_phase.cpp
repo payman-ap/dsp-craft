@@ -26,9 +26,7 @@ std::vector<dsp::Complex> shift_bins(const std::vector<dsp::Complex>& spectrum, 
     return out;
 }
 
-std::vector<dsp::Complex>
-shift_bins_real(const std::vector<dsp::Complex>& X,
-                int shift)
+std::vector<dsp::Complex> shift_bins_real(const std::vector<dsp::Complex>& X, int shift)
 {
     const size_t N = X.size();
 
@@ -96,7 +94,7 @@ int main()
 
     for (auto& frame : res_shifted.spectra)
     {
-        frame = shift_bins(frame, shift);
+        frame = shift_bins_real(frame, shift);
     }
     auto signal_rec_shifted = dsp::istft(res_shifted);
 
