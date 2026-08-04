@@ -210,3 +210,51 @@ for (size_t t = 1; t < stft.num_frames(); ++t)
 
 ```
 
+
+
+## Filter
+
+Numerical Implementation in C++
+
+When we transition to coding, we'll cover topics that don't appear in many DSP books:
+
+Direct convolution vs. circular convolution
+Cache-friendly coefficient layouts
+Circular buffers (avoid shifting samples every iteration)
+Block processing
+SIMD vectorization
+FFT-based FIR for long filters
+Floating-point accuracy
+Fixed-point considerations (if you're interested later)
+
+| Topic                     | Importance |
+| ------------------------- | ---------: |
+| Linear phase              |      ⭐⭐⭐⭐⭐ |
+| Minimum phase             |      ⭐⭐⭐⭐⭐ |
+| Filter specifications     |      ⭐⭐⭐⭐⭐ |
+| Window method             |      ⭐⭐⭐⭐⭐ |
+| Parks-McClellan intuition |      ⭐⭐⭐⭐☆ |
+| Group delay               |      ⭐⭐⭐⭐☆ |
+| Numerical implementation  |      ⭐⭐⭐⭐⭐ |
+| Polyphase & multirate     |      ⭐⭐⭐⭐☆ |
+| FIR structures            |      ⭐⭐⭐☆☆ |
+
+
+Where I'd go next
+
+At this point, I think you've reached a solid conceptual understanding of FIR design.
+
+The next topic I'd choose is implementation architecture, not more theory.
+
+Specifically:
+
+How would you design a reusable FIR filter library in modern C++?
+
+That opens up interesting engineering questions:
+
+FIRFilter<T> class design,
+circular buffers versus shifting samples,
+compile-time (std::array) versus runtime (std::vector) tap counts,
+streaming APIs versus block-processing APIs,
+coefficient storage, alignment, and SIMD-friendly layouts,
+and how libraries like Eigen, Intel IPP, CMSIS-DSP, or Liquid-DSP organize these ideas.
