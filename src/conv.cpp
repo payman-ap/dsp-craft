@@ -12,6 +12,8 @@ namespace dsp {
 
 std::vector<double> conv(const std::vector<double>& x, const std::vector<double>& h)
 {
+    if (x.empty() || h.empty()) return {};
+
     size_t N = x.size();
     size_t M = h.size();
 
@@ -30,6 +32,8 @@ std::vector<double> conv(const std::vector<double>& x, const std::vector<double>
 
 std::vector<double> cconv(const std::vector<double>& x, const std::vector<double>& h, size_t N = 0)
 {
+    if (x.empty() || h.empty()) return {};
+
     // If N is 0 or omitted, default to linear convolution length (N_x + N_h - 1)
     size_t min_len = x.size() + h.size() - 1;
     if (N == 0) {
@@ -69,6 +73,8 @@ std::vector<double> cconv(const std::vector<double>& x, const std::vector<double
 
 std::vector<double> fftconv(const std::vector<double>& x, const std::vector<double>& h)
 {
+    if (x.empty() || h.empty()) return {};
+    
     // Step 1: linear convolution length (N_x + N_h - 1)
     size_t min_len = x.size() + h.size() - 1;
     size_t N = std::bit_ceil(min_len);

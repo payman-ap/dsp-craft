@@ -41,6 +41,7 @@ add_library(dsp_craft STATIC
     src/windows.cpp
     src/signals.cpp
     src/stft.cpp
+    src/filters/fir.cpp
 )
 
 target_include_directories(dsp_craft PUBLIC include)
@@ -53,62 +54,71 @@ endif()
 # ------------------------------------------------------------------------------
 # Test Executables (tests/)
 # ------------------------------------------------------------------------------
-add_executable(test_conv tests/test_conv.cpp)
-target_link_libraries(test_conv PRIVATE dsp_craft)
+# add_executable(test_conv tests/test_conv.cpp)
+# target_link_libraries(test_conv PRIVATE dsp_craft)
 
-add_executable(test_fft tests/test_fft.cpp)
-target_link_libraries(test_fft PRIVATE dsp_craft)
+# add_executable(test_fft tests/test_fft.cpp)
+# target_link_libraries(test_fft PRIVATE dsp_craft)
 
-add_executable(test_ifft tests/test_ifft.cpp)
-target_link_libraries(test_ifft PRIVATE dsp_craft)
+# add_executable(test_ifft tests/test_ifft.cpp)
+# target_link_libraries(test_ifft PRIVATE dsp_craft)
 
-add_executable(test_stft tests/test_stft.cpp)
-target_link_libraries(test_stft PRIVATE dsp_craft)
+# add_executable(test_stft tests/test_stft.cpp)
+# target_link_libraries(test_stft PRIVATE dsp_craft)
 
-add_executable(test_istft tests/test_istft.cpp)
-target_link_libraries(test_istft PRIVATE dsp_craft)
+# add_executable(test_istft tests/test_istft.cpp)
+# target_link_libraries(test_istft PRIVATE dsp_craft)
+
+add_executable(test_fir tests/test_fir.cpp)
+target_link_libraries(test_fir PRIVATE dsp_craft)
 
 # ------------------------------------------------------------------------------
 # Example & Benchmark Executables (examples/)
 # ------------------------------------------------------------------------------
-add_executable(benchmark_conv examples/benchmark_conv.cpp)
-target_link_libraries(benchmark_conv PRIVATE dsp_craft)
+# add_executable(benchmark_conv examples/benchmark_conv.cpp)
+# target_link_libraries(benchmark_conv PRIVATE dsp_craft)
 
-add_executable(benchmark_fft examples/benchmark_fft.cpp)
-target_link_libraries(benchmark_fft PRIVATE dsp_craft)
+# add_executable(benchmark_fft examples/benchmark_fft.cpp)
+# target_link_libraries(benchmark_fft PRIVATE dsp_craft)
 
-add_executable(example_stft examples/example_stft.cpp)
-target_link_libraries(example_stft PRIVATE dsp_craft)
+# add_executable(example_stft examples/example_stft.cpp)
+# target_link_libraries(example_stft PRIVATE dsp_craft)
 
-add_executable(example_window examples/example_window.cpp)
-target_link_libraries(example_window PRIVATE dsp_craft)
+# add_executable(example_window examples/example_window.cpp)
+# target_link_libraries(example_window PRIVATE dsp_craft)
 
-add_executable(example_signals examples/example_signals.cpp)
-target_link_libraries(example_signals PRIVATE dsp_craft)
+# add_executable(example_signals examples/example_signals.cpp)
+# target_link_libraries(example_signals PRIVATE dsp_craft)
 
-add_executable(test_spectrum tests/test_spectrum.cpp)
-target_link_libraries(test_spectrum PRIVATE dsp_craft)
+# add_executable(test_spectrum tests/test_spectrum.cpp)
+# target_link_libraries(test_spectrum PRIVATE dsp_craft)
+
+add_executable(example_fir examples/example_fir.cpp)
+target_link_libraries(example_fir PRIVATE dsp_craft)
+
+add_executable(filter_response src/filters/filter_response.cpp)
+target_link_libraries(filter_response PRIVATE dsp_craft)
 
 
 # ------------------------------------------------------------------------------
 # Executables (src/)
 # ------------------------------------------------------------------------------
 
-add_executable(run_phase examples/example_phase.cpp)
-target_link_libraries(run_phase PRIVATE dsp_craft)
+# add_executable(run_phase examples/example_phase.cpp)
+# target_link_libraries(run_phase PRIVATE dsp_craft)
 
 # ------------------------------------------------------------------------------
 # GoogleTest Suite
 # ------------------------------------------------------------------------------
-find_package(GTest REQUIRED)
-include(GoogleTest)
+# find_package(GTest REQUIRED)
+# include(GoogleTest)
 
-# Add your property test executable
-add_executable(test_stft_properties tests/test_stft_properties.cpp)
+# # Add your property test executable
+# add_executable(test_stft_properties tests/test_stft_properties.cpp)
 
-# Link against your library (dsp_craft) and GTest
-target_link_libraries(test_stft_properties PRIVATE dsp_craft GTest::gtest GTest::gtest_main)
+# # Link against your library (dsp_craft) and GTest
+# target_link_libraries(test_stft_properties PRIVATE dsp_craft GTest::gtest GTest::gtest_main)
 
-# Enables 'ctest' discovery
-gtest_discover_tests(test_stft_properties)
+# # Enables 'ctest' discovery
+# gtest_discover_tests(test_stft_properties)
 

@@ -258,3 +258,147 @@ compile-time (std::array) versus runtime (std::vector) tap counts,
 streaming APIs versus block-processing APIs,
 coefficient storage, alignment, and SIMD-friendly layouts,
 and how libraries like Eigen, Intel IPP, CMSIS-DSP, or Liquid-DSP organize these ideas.
+
+
+
+### Filter roadmap
+
+```
+                FILTERS
+                   │
+                   ▼
+        ┌─────────────────────┐
+        │  1. FIR foundation  │
+        └─────────────────────┘
+                   │
+                   ▼
+        Direct-form FIR
+                   │
+                   ▼
+        FIR frequency response
+                   │
+                   ▼
+        Moving-average filter
+                   │
+                   ▼
+        Windowed-sinc LPF
+                   │
+                   ▼
+        HPF / BPF / BSF
+                   │
+                   ▼
+        Window comparison
+                   │
+                   ▼
+        ┌─────────────────────┐
+        │  2. FIR analysis    │
+        └─────────────────────┘
+                   │
+          impulse response
+          step response
+          frequency response
+          phase / group delay
+          linear phase
+                   │
+                   ▼
+        ┌─────────────────────┐
+        │  3. IIR foundation  │
+        └─────────────────────┘
+                   │
+                   ▼
+        Difference equations
+                   │
+                   ▼
+        Direct Form I
+                   │
+                   ▼
+        Direct Form II
+                   │
+                   ▼
+        First/second-order IIR
+                   │
+                   ▼
+        Biquad
+                   │
+                   ▼
+        ┌─────────────────────┐
+        │  4. IIR design      │
+        └─────────────────────┘
+                   │
+                   ▼
+        Butterworth
+                   │
+                   ▼
+        Chebyshev
+                   │
+                   ▼
+        Pole / zero analysis
+                   │
+                   ▼
+        Stability experiments
+                   │
+                   ▼
+        ┌─────────────────────┐
+        │  5. Filter toolbox  │
+        └─────────────────────┘
+                   │
+                   ▼
+        FIR + IIR common API
+                   │
+                   ▼
+        Filter frequency response
+                   │
+                   ▼
+        Cascading filters
+                   │
+                   ▼
+        Streaming processing
+                   │
+                   ▼
+        Real-time filtering
+                   │
+                   ▼
+        ┌─────────────────────┐
+        │  6. FFT filtering   │
+        └─────────────────────┘
+                   │
+                   ▼
+        Overlap-save
+                   │
+                   ▼
+        Partitioned convolution
+                   │
+                   ▼
+        Real-time convolution
+                   │
+                   ▼
+             Mini DSP Library
+                   │
+                   ▼
+           Real-time DSP
+```
+
+
+```
+✓ FIR direct-form filtering
+        ↓
+✓ FIR unit tests
+        ↓
+✓ impulse response
+        ↓
+✓ step response
+        ↓
+✓ FIR frequency response
+        ↓
+✓ moving-average filter
+        ↓
+✓ efficient moving-average implementation
+        ↓
+✓ benchmark naive vs efficient
+        ↓
+✓ windowed-sinc LPF
+        ↓
+✓ LPF with different windows
+        ↓
+✓ LPF frequency-response analysis
+```
