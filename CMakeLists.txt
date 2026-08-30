@@ -99,6 +99,12 @@ target_link_libraries(example_fir PRIVATE dsp_craft)
 add_executable(filter_response src/filters/filter_response.cpp)
 target_link_libraries(filter_response PRIVATE dsp_craft)
 
+add_executable(example_psd examples/example_psd.cpp)
+target_link_libraries(example_psd PRIVATE dsp_craft)
+
+add_executable(example_psd_parseval examples/example_psd_parseval.cpp)
+target_link_libraries(example_psd_parseval PRIVATE dsp_craft)
+
 
 # ------------------------------------------------------------------------------
 # Executables (src/)

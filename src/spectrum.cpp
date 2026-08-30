@@ -1,5 +1,5 @@
 #include "spectrum.hpp"
-#include <cmath>
+
 
 namespace dsp {
 
@@ -363,6 +363,47 @@ std::vector<std::vector<double>> spectrogram_power_db(const std::vector<std::vec
 std::vector<std::vector<double>> spectrogram(const std::vector<std::vector<Complex>>& stft)
 {
     return spectrogram_mag(stft);
+}
+
+
+std::vector<double> power_spectral_density(const std::vector<Complex>& X, double sample_rate)
+{
+    if (X.empty())
+    return {};
+    if (sample_rate <= 0.0)
+        throw std::invalid_argument("sample_rate must be positive");
+
+    const std::size_t N = X.size();
+
+    std::vector<double> psd (N / 2 + 1);
+
+    const double scale = 1.0 / (static_cast<double>(N) * sample_rate);
+
+    for (std::size_t k = 0; k <= N / 2; ++k)
+    {
+        psd[k] = std::norm(X[k]) * scale;
+
+        if (k != 0 && k != N / 2)
+        {
+            psd[k] *= 2.0;
+        }
+    }
+
+    return psd;
+}
+
+std::vector<double> power_spectral_density_db(const std::vector<Complex>& X, double sample_rate, double eps)
+{
+    std::vector<double> psd = power_spectral_density(X, sample_rate);
+
+    std::vector<double> psd_db (psd.size());
+
+    for (size_t k = 0; k < psd.size(); ++k)
+    {
+        psd_db[k] = 10.0 * std::log10(psd[k] + eps);
+    }
+
+    return psd_db;
 }
 
 

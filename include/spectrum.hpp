@@ -3,6 +3,8 @@
 
 #include <complex>
 #include <vector>
+#include <cmath>
+#include <stdexcept>
 
 namespace dsp {
 
@@ -111,6 +113,19 @@ std::vector<std::vector<double>> spectrogram_power_db(const std::vector<std::vec
 
 // Alias for spectrogram_mag for backward compatibility
 std::vector<std::vector<double>> spectrogram(const std::vector<std::vector<Complex>>& stft);
+
+// ---------------------------------------------------------------------------
+// Power Spectral Density
+// ---------------------------------------------------------------------------
+
+// One-sided periodogram PSD.
+// Returns N/2 + 1 bins for an FFT of size N.
+// PSD units are signal^2 / Hz.
+std::vector<double> power_spectral_density(const std::vector<Complex>& X, double sample_rate);
+// One-sided power spectral density in decibels.
+// Units: dB relative to signal^2 / Hz.
+std::vector<double> power_spectral_density_db(const std::vector<Complex>& X, double sample_rate, double eps = 1e-12);
+
 
 } // namespace dsp
 
